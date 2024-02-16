@@ -41,6 +41,18 @@ namespace CamadaTabuleiro
             p.PosicaoPeca = Pos;
         }
 
+        public Peca RetirarPecaDaPosicao(Posicao pos)
+        {
+            if (PecaNaPosicao(pos) == null)
+            {
+                return null;
+            }
+            Peca aux = PecaNaPosicao(pos);
+            aux.PosicaoPeca = null;
+            MatrizPecas[pos.Linha, pos.Coluna] = null;
+            return aux;
+        }
+
         public bool PosicaoValida(Posicao pos)
         {
             if (pos.Linha < 0 || pos.Linha >= Linhas || pos.Coluna < 0 || pos.Coluna >= Colunas)

@@ -21,6 +21,11 @@ namespace CamadaTabuleiro
             QuantidadeMovimentos = 0;
         }
 
+        public void IncrementarQuantidadeDeMovimentos()
+        {
+            QuantidadeMovimentos++;
+        }
+
 
 
 
