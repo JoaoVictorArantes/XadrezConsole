@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,67 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
         public override string ToString()
         {
             return "B";
+        }
+        private bool PodeMover(Posicao Pos)
+        {
+            Peca p = Tab.PecaNaPosicao(Pos);
+            return p == null || p.Cor != Cor;
+        }
+        public override bool[,] MovimentosPossiveis()
+        {
+            bool[,] MatrixAux = new bool[Tab.Linhas, Tab.Colunas];
+
+            Posicao pos = new Posicao(0, 0);
+            
+            // NO
+            pos.DefinirValores(PosicaoPeca.Linha - 1, PosicaoPeca.Coluna - 1);
+            while (Tab.PosicaoValida(pos) && PodeMover(pos))
+            {
+                MatrixAux[pos.Linha, pos.Coluna] = true;
+                if (
+                    Tab.PecaNaPosicao(pos) != null && Tab.PecaNaPosicao(pos).Cor != Cor)
+                {
+                    break;
+                }
+                pos.DefinirValores(pos.Linha - 1, pos.Coluna - 1);
+            }
+
+            // NE
+            pos.DefinirValores(PosicaoPeca.Linha - 1, PosicaoPeca.Coluna + 1);
+            while (Tab.PosicaoValida(pos) && PodeMover(pos))
+            {
+                MatrixAux[pos.Linha, pos.Coluna] = true;
+                if (Tab.PecaNaPosicao(pos) != null && Tab.PecaNaPosicao(pos).Cor != Cor)
+                {
+                    break;
+                }
+                pos.DefinirValores(pos.Linha - 1, pos.Coluna + 1);
+            }
+
+            // SE
+            pos.DefinirValores(PosicaoPeca.Linha + 1, PosicaoPeca.Coluna + 1);
+            while (Tab.PosicaoValida(pos) && PodeMover(pos))
+            {
+                MatrixAux[pos.Linha, pos.Coluna] = true;
+                if (Tab.PecaNaPosicao(pos) != null && Tab.PecaNaPosicao(pos).Cor != Cor)
+                {
+                    break;
+                }
+                pos.DefinirValores(pos.Linha + 1, pos.Coluna + 1);
+            }
+
+            // SO
+            pos.DefinirValores(PosicaoPeca.Linha + 1, PosicaoPeca.Coluna - 1);
+            while (Tab.PosicaoValida(pos) && PodeMover(pos))
+            {
+                MatrixAux[pos.Linha, pos.Coluna] = true;
+                if (Tab.PecaNaPosicao(pos) != null && Tab.PecaNaPosicao(pos).Cor != Cor)
+                {
+                    break;
+                }
+                pos.DefinirValores(pos.Linha + 1, pos.Coluna - 1);
+            }
+            return MatrixAux;
         }
     }
 }

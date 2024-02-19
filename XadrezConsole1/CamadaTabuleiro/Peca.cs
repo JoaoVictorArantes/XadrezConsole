@@ -4,9 +4,9 @@ using System.Runtime.ConstrainedExecution;
 
 namespace CamadaTabuleiro
 {
-    class Peca
+    abstract class Peca
     {
-        public Posicao PosicaoPeca{ get; set; }
+        public Posicao PosicaoPeca { get; set; }
         public CorPeca Cor { get; protected set; }
 
         public int QuantidadeMovimentos { get; protected set; }
@@ -25,6 +25,8 @@ namespace CamadaTabuleiro
         {
             QuantidadeMovimentos++;
         }
+
+        public abstract bool[,] MovimentosPossiveis();
 
 
 

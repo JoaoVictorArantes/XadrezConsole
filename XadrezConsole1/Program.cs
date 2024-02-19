@@ -17,7 +17,14 @@ namespace XadrezConsole1
                     TelaJogo.ImprimirTabuleiro(Partida.Tab);
 
                     Console.Write("Origem: ");
-                    Posicao OrigemDoMovimento = TelaJogo.LerPosicaoXadrez().toPosicao(); 
+                    Posicao OrigemDoMovimento = TelaJogo.LerPosicaoXadrez().toPosicao();
+
+                    bool[,] PosicaoPossiveis = Partida.Tab.PecaNaPosicao(OrigemDoMovimento).MovimentosPossiveis();// criei uma matriz pegando o tabuleiro da partida, peça na posicao e verifiquei os movimentos possiveis dela 
+
+                    Console.Clear();// limpa a tela para mostrar os movimentos possiveis
+                    TelaJogo.ImprimirTabuleiro(Partida.Tab, PosicaoPossiveis);
+
+                    Console.WriteLine();
                     Console.Write("Destino: ");
                     Posicao DestinoDoMovimento = TelaJogo.LerPosicaoXadrez().toPosicao();
 
