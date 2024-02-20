@@ -16,16 +16,12 @@ namespace XadrezConsole1
                     try
                     {
                         Console.Clear();
-                        TelaJogo.ImprimirTabuleiro(Partida.Tab);
+                        TelaJogo.ImprimirPartida(Partida);
 
-                        Console.WriteLine();
-                        Console.WriteLine($"Turno: {Partida.Turno}");
-                        Console.WriteLine($"Aguardando jogada: {Partida.JogadorAtual}");
-
-                        Console.Write("Origem: ");
+                        Console.Write("\nOrigem: ");
                         Posicao OrigemDoMovimento = TelaJogo.LerPosicaoXadrez().toPosicao();
 
-                        Partida.ValidarPsicaoDeOrigem(OrigemDoMovimento);
+                        Partida.ValidarPosicaoDeOrigem(OrigemDoMovimento);
 
                         bool[,] PosicaoPossiveis = Partida.Tab.PecaNaPosicao(OrigemDoMovimento).MovimentosPossiveis();// criei uma matriz pegando o tabuleiro da partida, peça na posicao e verifiquei os movimentos possiveis dela 
 
@@ -33,7 +29,7 @@ namespace XadrezConsole1
                         TelaJogo.ImprimirTabuleiro(Partida.Tab, PosicaoPossiveis);
 
                         Console.WriteLine();
-                        Console.Write("Destino: ");
+                        Console.Write("\nDestino: ");
                         Posicao DestinoDoMovimento = TelaJogo.LerPosicaoXadrez().toPosicao();
                         Partida.ValidarPosicaoDeDestino(OrigemDoMovimento, DestinoDoMovimento);
 
