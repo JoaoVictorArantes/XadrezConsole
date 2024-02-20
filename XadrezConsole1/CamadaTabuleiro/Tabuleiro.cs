@@ -43,17 +43,18 @@ namespace CamadaTabuleiro
 
         public Peca RetirarPecaDaPosicao(Posicao pos)
         {
-            if (PecaNaPosicao(pos) == null)
+            if (PecaNaPosicao(pos) == null)//se n tem nada, retorna nada 
             {
                 return null;
             }
+            //caso contrario pega a peça na posiçao e transforma em nula
             Peca aux = PecaNaPosicao(pos);
             aux.PosicaoPeca = null;
             MatrizPecas[pos.Linha, pos.Coluna] = null;
             return aux;
         }
 
-        public bool PosicaoValida(Posicao pos)
+        public bool PosicaoValida(Posicao pos)//verifica se ta dentro do tabuleiro
         {
             if (pos.Linha < 0 || pos.Linha >= Linhas || pos.Coluna < 0 || pos.Coluna >= Colunas)
             {

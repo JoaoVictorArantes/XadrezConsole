@@ -29,7 +29,7 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
 
             Posicao pos = new Posicao(0, 0);
             
-            // NO
+            // NOROESTE
             pos.DefinirValores(PosicaoPeca.Linha - 1, PosicaoPeca.Coluna - 1);
             while (Tab.PosicaoValida(pos) && PodeMover(pos))
             {
@@ -42,7 +42,7 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
                 pos.DefinirValores(pos.Linha - 1, pos.Coluna - 1);
             }
 
-            // NE
+            // NORDESTE
             pos.DefinirValores(PosicaoPeca.Linha - 1, PosicaoPeca.Coluna + 1);
             while (Tab.PosicaoValida(pos) && PodeMover(pos))
             {
@@ -54,7 +54,7 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
                 pos.DefinirValores(pos.Linha - 1, pos.Coluna + 1);
             }
 
-            // SE
+            // SUDESTE
             pos.DefinirValores(PosicaoPeca.Linha + 1, PosicaoPeca.Coluna + 1);
             while (Tab.PosicaoValida(pos) && PodeMover(pos))
             {
@@ -66,7 +66,7 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
                 pos.DefinirValores(pos.Linha + 1, pos.Coluna + 1);
             }
 
-            // SO
+            // SUDOESTE
             pos.DefinirValores(PosicaoPeca.Linha + 1, PosicaoPeca.Coluna - 1);
             while (Tab.PosicaoValida(pos) && PodeMover(pos))
             {

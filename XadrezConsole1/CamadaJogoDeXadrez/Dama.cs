@@ -38,6 +38,7 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
                     break;
                 }
                 pos.Linha = pos.Linha - 1;
+
             }
             //nordeste
             pos.DefinirValores(PosicaoPeca.Linha - 1, PosicaoPeca.Coluna + 1);
@@ -48,7 +49,8 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
                 {
                     break;
                 }
-                pos.Linha = pos.Linha - 1;
+                
+                pos.DefinirValores(pos.Linha - 1, pos.Coluna + 1);
             }
 
             //leste 
@@ -71,7 +73,8 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
                 {
                     break;
                 }
-                pos.Linha = pos.Linha - 1;
+                
+                pos.DefinirValores(pos.Linha + 1, pos.Coluna + 1);
             }
 
             //sul
@@ -95,7 +98,8 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
                 {
                     break;
                 }
-                pos.Coluna = pos.Coluna - 1;
+                
+                pos.DefinirValores(pos.Linha + 1, pos.Coluna - 1);
             }
             //oeste
             pos.DefinirValores(PosicaoPeca.Linha, PosicaoPeca.Coluna - 1);
@@ -106,7 +110,7 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
                 {
                     break;
                 }
-                pos.Linha = pos.Linha - 1;
+                pos.Coluna = pos.Coluna - 1;
             }
             //noroeste
             pos.DefinirValores(PosicaoPeca.Linha - 1, PosicaoPeca.Coluna - 1);
@@ -117,7 +121,8 @@ namespace XadrezConsole1.CamadaJogoDeXadrez
                 {
                     break;
                 }
-                pos.Linha = pos.Linha - 1;
+                
+                pos.DefinirValores(pos.Linha - 1, pos.Coluna - 1);
             }
 
             return MatrixAux;

@@ -39,7 +39,7 @@ namespace CamadaJogoDeXadrez
             }
             
             //leste 
-            pos.DefinirValores(PosicaoPeca.Linha - 1, PosicaoPeca.Coluna);
+            pos.DefinirValores(PosicaoPeca.Linha, PosicaoPeca.Coluna - 1);
             while (Tab.PosicaoValida(pos) && podeMover(pos))// enquanto nao estiver no fim do tabuleiro e nao houver peças inimigas no caminho;
             {
                 MatrixAux[pos.Linha, pos.Coluna] = true;
@@ -47,11 +47,11 @@ namespace CamadaJogoDeXadrez
                 {
                     break;
                 }
-                pos.Coluna = pos.Coluna + 1;
+                pos.Coluna = pos.Coluna - 1;
             }
             
             //sul
-            pos.DefinirValores(PosicaoPeca.Linha - 1, PosicaoPeca.Coluna);
+            pos.DefinirValores(PosicaoPeca.Linha + 1, PosicaoPeca.Coluna);
             while (Tab.PosicaoValida(pos) && podeMover(pos))// enquanto nao estiver no fim do tabuleiro e nao houver peças inimigas no caminho;
             {
                 MatrixAux[pos.Linha, pos.Coluna] = true;
@@ -63,7 +63,7 @@ namespace CamadaJogoDeXadrez
             }
            
             //oeste
-            pos.DefinirValores(PosicaoPeca.Linha - 1, PosicaoPeca.Coluna);
+            pos.DefinirValores(PosicaoPeca.Linha, PosicaoPeca.Coluna + 1);
             while (Tab.PosicaoValida(pos) && podeMover(pos))// enquanto nao estiver no fim do tabuleiro e nao houver peças inimigas no caminho;
             {
                 MatrixAux[pos.Linha, pos.Coluna] = true;
@@ -71,7 +71,7 @@ namespace CamadaJogoDeXadrez
                 {
                     break;
                 }
-                pos.Coluna = pos.Coluna - 1;
+                pos.Coluna = pos.Coluna + 1;
             }            
 
             return MatrixAux;

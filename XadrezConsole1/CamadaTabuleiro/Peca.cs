@@ -25,6 +25,28 @@ namespace CamadaTabuleiro
         {
             QuantidadeMovimentos++;
         }
+        public bool PodeMoverPara(Posicao posicao)
+        {
+            return MovimentosPossiveis()[posicao.Linha, posicao.Coluna];
+        }
+
+
+        public bool ExisteMovimentosPossiveis()// verifica se na matriz de  MovimentosPossiveis() existe pelomenos 1 movimento válido
+        {
+            bool[,] Mat = MovimentosPossiveis();
+
+            for (int i = 0; i < Tab.Linhas; i++)
+            {
+                for (int j = 0; j < Tab.Colunas; j++)
+                {
+                    if (Mat[i, j])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         public abstract bool[,] MovimentosPossiveis();
 
