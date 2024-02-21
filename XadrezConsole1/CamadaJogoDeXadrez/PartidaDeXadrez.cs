@@ -12,6 +12,7 @@ namespace CamadaJogoDeXadrez
         public bool PartidaTerminada { get; private set; }
         private HashSet<Peca> ConjuntoDepecasEmJogo;
         private HashSet<Peca> ConjuntoDePecasCapturadas;
+        public bool SeEstouEmXeque { get; private set; }
 
         public PartidaDeXadrez()
         {
@@ -21,11 +22,12 @@ namespace CamadaJogoDeXadrez
             PartidaTerminada = false;
             ConjuntoDepecasEmJogo = new HashSet<Peca>();
             ConjuntoDePecasCapturadas = new HashSet<Peca>();
+            SeEstouEmXeque = false;
 
             ColocarPecas();
         }
 
-        public void ExecutaMovimento(Posicao PosicaoDeOrigem, Posicao PosicaoDeDestino)//retira a peça do lugar de origem, incrementa os movimentos,
+        public Peca ExecutaMovimento(Posicao PosicaoDeOrigem, Posicao PosicaoDeDestino)//retira a peça do lugar de origem, incrementa os movimentos e registra a captura
         {
             Peca p = Tab.RetirarPecaDaPosicao(PosicaoDeOrigem);
             p.IncrementarQuantidadeDeMovimentos();
@@ -36,11 +38,40 @@ namespace CamadaJogoDeXadrez
             {
                 ConjuntoDePecasCapturadas.Add(PecaCapturada);
             }
+
+            return PecaCapturada;
         }
+        public void DesfazerMovimento(Posicao Origem, Posicao Destino, Peca PecaCapturada)
+        {
+            Peca peca = Tab.RetirarPecaDaPosicao(Destino);
+            peca.DecrementarQuantidadeDeMovimentos();
+            if (PecaCapturada != null)//se teve peca capturada
+            {
+                Tab.ColocarPecaNaPosicao(PecaCapturada, Destino);
+                ConjuntoDePecasCapturadas.Remove(PecaCapturada);
+            }
+            Tab.ColocarPecaNaPosicao(peca, Origem); // Desfez o movimento, voltando a peça para a origem dela.
+        }
+
 
         public void RealizaJogada(Posicao origem, Posicao destino) //Executa um movimento, incrementa o turno e troca o jogador da vez
         {
-            ExecutaMovimento(origem, destino);
+            Peca PecaCapturada = ExecutaMovimento(origem, destino);
+
+            if (EstaEmXeque(JogadorAtual))
+            {
+                DesfazerMovimento(origem, destino, PecaCapturada);
+                throw new TabuleiroException("Voce não pode se colocar em Xeque!!! :(");
+            }
+            if (EstaEmXeque(Adversaria(JogadorAtual)))//Se meu oponente esta em xeque, deixa realizar a jogada
+            {
+                SeEstouEmXeque = true;
+            }
+            else
+            {
+                SeEstouEmXeque = false;
+            }
+
             Turno++;
             MudaJogador();
         }
@@ -77,6 +108,51 @@ namespace CamadaJogoDeXadrez
                 throw new TabuleiroException("Posiçao de destino inválida! ");
             }
         }
+        private CorPeca Adversaria(CorPeca cor)//Diz quem é o adversário
+        {
+            if (cor == CorPeca.Branca)
+            {
+                return CorPeca.Preta;
+            }
+            else
+            {
+                return CorPeca.Branca;
+            }
+        }
+
+        public bool EstaEmXeque(CorPeca cor)//verifica se alguma peça adversária tem movimentos possiveis em direçao ao rei(xeque)
+        {
+            Peca MeuRei = Rei(cor);
+
+            if (MeuRei == null)// verifica se tem rei em jogo (deve ter)
+            {
+                throw new TabuleiroException($"Não tem rei da cor {cor} no tabuleiro!!! :(");
+            }
+            foreach (Peca peca in PecasEmJogo(Adversaria(cor)))
+            {
+                bool[,] MatAux = peca.MovimentosPossiveis();
+                if (MatAux[MeuRei.PosicaoPeca.Linha, MeuRei.PosicaoPeca.Coluna])
+                {
+                    return true;
+                }
+            }
+            return false;
+
+
+        }
+
+        private Peca Rei(CorPeca cor)//verifica se é o rei (Faz parte da logica do 'xeck')
+        {
+            foreach (Peca peca in PecasEmJogo(cor))
+            {
+                if (peca is Rei)
+                {
+                    return peca;
+                }
+            }
+            return null;
+        }
+
         public HashSet<Peca> PecasCapturadas(CorPeca cor)//peças capturadas de acordo com a cor.
         {
             HashSet<Peca> ConjuntoAuxiliar = new HashSet<Peca>();//crio um conjunto do tipo 'Peça'

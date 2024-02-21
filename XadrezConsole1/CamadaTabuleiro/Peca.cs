@@ -25,6 +25,10 @@ namespace CamadaTabuleiro
         {
             QuantidadeMovimentos++;
         }
+        public void DecrementarQuantidadeDeMovimentos()
+        {
+            QuantidadeMovimentos--;
+        }
         public bool PodeMoverPara(Posicao posicao)
         {
             return MovimentosPossiveis()[posicao.Linha, posicao.Coluna];
