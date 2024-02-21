@@ -80,6 +80,32 @@ namespace CamadaJogoDeXadrez
                 ConjuntoDePecasCapturadas.Add(PecaCapturada);
             }
 
+            //Roque pequeno
+            if (p is Rei && PosicaoDeDestino.Coluna == PosicaoDeOrigem.Coluna + 2)
+            {
+                Posicao OrigemTorre = new Posicao(PosicaoDeOrigem.Linha, PosicaoDeOrigem.Coluna + 3);
+                Posicao DestinoTorre = new Posicao(PosicaoDeOrigem.Linha, PosicaoDeOrigem.Coluna + 1);
+
+                Peca Torre = Tab.RetirarPecaDaPosicao(OrigemTorre);
+
+                Torre.IncrementarQuantidadeDeMovimentos();
+
+                Tab.ColocarPecaNaPosicao(Torre, DestinoTorre);            
+            }
+
+            //Roque grande
+            if (p is Rei && PosicaoDeDestino.Coluna == PosicaoDeOrigem.Coluna - 2)
+            {
+                Posicao OrigemTorre = new Posicao(PosicaoDeOrigem.Linha, PosicaoDeOrigem.Coluna - 4);
+                Posicao DestinoTorre = new Posicao(PosicaoDeOrigem.Linha, PosicaoDeOrigem.Coluna - 1);
+
+                Peca Torre = Tab.RetirarPecaDaPosicao(OrigemTorre);
+
+                Torre.IncrementarQuantidadeDeMovimentos();
+
+                Tab.ColocarPecaNaPosicao(Torre, DestinoTorre);
+            }
+
             return PecaCapturada;
         }
         public void DesfazerMovimento(Posicao Origem, Posicao Destino, Peca PecaCapturada)
@@ -94,6 +120,32 @@ namespace CamadaJogoDeXadrez
                 ConjuntoDePecasCapturadas.Remove(PecaCapturada);
             }
             Tab.ColocarPecaNaPosicao(peca, Origem); // Desfez o movimento, voltando a peça para a origem dela.
+
+            //Roque Pequeno
+            if (peca is Rei && Destino.Coluna == Origem.Coluna + 2)// testo se é um rei e se mecheu 2 para a direita
+            {
+                Posicao OrigemTorre = new Posicao(Origem.Linha, Origem.Coluna + 3);
+                Posicao DestinoTorre = new Posicao(Origem.Linha, Origem.Coluna + 1);
+
+                Peca Torre = Tab.RetirarPecaDaPosicao(DestinoTorre);//tiro o rei do destino
+
+                Torre.DecrementarQuantidadeDeMovimentos();
+
+                Tab.ColocarPecaNaPosicao(Torre, OrigemTorre);// volto o rei para a origem
+            }
+            
+            //Roque Grande
+            if (peca is Rei && Destino.Coluna == Origem.Coluna - 2)
+            {
+                Posicao OrigemTorre = new Posicao(Origem.Linha, Origem.Coluna - 4);
+                Posicao DestinoTorre = new Posicao(Origem.Linha, Origem.Coluna - 1);
+
+                Peca Torre = Tab.RetirarPecaDaPosicao(DestinoTorre);
+
+                Torre.DecrementarQuantidadeDeMovimentos();
+
+                Tab.ColocarPecaNaPosicao(Torre, OrigemTorre);
+            }
         }
 
 
@@ -111,13 +163,12 @@ namespace CamadaJogoDeXadrez
             {
                 SeEstouEmXeque = true;
             }
-
             else
             {
                 SeEstouEmXeque = false;
             }
 
-            if (TesteXequeMate(Adversaria(JogadorAtual)))// realizei a jogada e meu adverspario esta em xeque-mate
+            if (TesteXequeMate(Adversaria(JogadorAtual)))// realizei a jogada e meu adversario esta em xeque-mate
             {
                 PartidaTerminada = true;// Fim de jogo
             }
@@ -160,7 +211,7 @@ namespace CamadaJogoDeXadrez
 
         public void ValidarPosicaoDeDestino(Posicao origem, Posicao destino)
         {
-            if (!Tab.PecaNaPosicao(origem).PodeMoverPara(destino))
+            if (!Tab.PecaNaPosicao(origem).MovimentoPossivel(destino))
             {
                 throw new TabuleiroException("Posiçao de destino inválida! ");
             }
@@ -252,7 +303,7 @@ namespace CamadaJogoDeXadrez
             ColocarNovaPeca('a', 1, new Torre(Tab, CorPeca.Branca));
             ColocarNovaPeca('b', 1, new Cavalo(Tab, CorPeca.Branca));
             ColocarNovaPeca('c', 1, new Bispo(Tab, CorPeca.Branca));
-            ColocarNovaPeca('d', 1, new Rei(Tab, CorPeca.Branca));
+            ColocarNovaPeca('d', 1, new Rei(Tab, CorPeca.Branca, this));
             ColocarNovaPeca('e', 1, new Dama(Tab, CorPeca.Branca));
             ColocarNovaPeca('f', 1, new Bispo(Tab, CorPeca.Branca));
             ColocarNovaPeca('g', 1, new Cavalo(Tab, CorPeca.Branca));
@@ -270,7 +321,7 @@ namespace CamadaJogoDeXadrez
             ColocarNovaPeca('a', 8, new Torre(Tab, CorPeca.Preta));
             ColocarNovaPeca('b', 8, new Cavalo(Tab, CorPeca.Preta));
             ColocarNovaPeca('c', 8, new Bispo(Tab, CorPeca.Preta));
-            ColocarNovaPeca('d', 8, new Rei(Tab, CorPeca.Preta));
+            ColocarNovaPeca('d', 8, new Rei(Tab, CorPeca.Preta, this));
             ColocarNovaPeca('e', 8, new Dama(Tab, CorPeca.Preta));
             ColocarNovaPeca('f', 8, new Bispo(Tab, CorPeca.Preta));
             ColocarNovaPeca('g', 8, new Cavalo(Tab, CorPeca.Preta));

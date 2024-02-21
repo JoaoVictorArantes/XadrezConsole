@@ -25,15 +25,16 @@ namespace CamadaTabuleiro
         {
             QuantidadeMovimentos++;
         }
+
         public void DecrementarQuantidadeDeMovimentos()
         {
             QuantidadeMovimentos--;
         }
-        public bool PodeMoverPara(Posicao posicao)
+
+        public bool MovimentoPossivel(Posicao posicao)
         {
             return MovimentosPossiveis()[posicao.Linha, posicao.Coluna];
         }
-
 
         public bool ExisteMovimentosPossiveis()// verifica se na matriz de  MovimentosPossiveis() existe pelomenos 1 movimento válido
         {
@@ -53,10 +54,6 @@ namespace CamadaTabuleiro
         }
 
         public abstract bool[,] MovimentosPossiveis();
-
-
-
-
 
     }
 }

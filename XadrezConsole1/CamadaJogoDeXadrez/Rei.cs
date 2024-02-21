@@ -7,9 +7,11 @@ namespace CamadaJogoDeXadrez
 {
     internal class Rei : Peca
     {
-        public Rei(Tabuleiro tab, CorPeca cor): base(tab, cor)
-        {
+        private PartidaDeXadrez partidaDeXadrez;
 
+        public Rei(Tabuleiro tab, CorPeca cor, PartidaDeXadrez partidaDeXadrez) : base(tab, cor)
+        {
+            this.partidaDeXadrez = partidaDeXadrez;
         }
         public override string ToString()
         {
@@ -20,6 +22,15 @@ namespace CamadaJogoDeXadrez
             Peca p = Tab.PecaNaPosicao(pos);
             return p == null || p.Cor != Cor;
         }
+
+        private bool TesteTorreParaRoque(Posicao posicao)// Testa se a torre na posiçao é elegivel para roque pequeno
+        {
+            Peca peca = Tab.PecaNaPosicao(posicao);
+
+            return peca != null && peca is Torre && peca.Cor == Cor && peca.QuantidadeMovimentos == 0;
+        }
+
+
         public override bool[,] MovimentosPossiveis()
         {
             bool[,] MatrixAux = new bool[Tab.Linhas, Tab.Colunas];
@@ -74,6 +85,48 @@ namespace CamadaJogoDeXadrez
             {
                 MatrixAux[pos.Linha, pos.Coluna] = true;
             }
+
+            //JOGADA ESPECIAL ROQUE PEQUENO GRANDE
+            if (QuantidadeMovimentos == 0 && !partidaDeXadrez.SeEstouEmXeque)
+            {
+                // Roque pequeno
+                Posicao PosicaoTorre1 = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna + 3);
+
+                if (TesteTorreParaRoque(PosicaoTorre1))
+                {
+                    Posicao Posicao1 = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna + 1);
+
+                    Posicao Posicao2 = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna + 2);
+
+                    if (Tab.PecaNaPosicao(Posicao1) == null && Tab.PecaNaPosicao(Posicao2) == null)
+                    {
+                        MatrixAux[PosicaoPeca.Linha, PosicaoPeca.Coluna + 2] = true;
+                    }
+                }
+                // Roque Grande
+                Posicao PosicaoTorre2 = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna - 4);
+
+                if (TesteTorreParaRoque(PosicaoTorre2))
+                {
+                    Posicao Posicao1 = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna - 1);
+
+                    Posicao Posicao2 = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna - 2);
+
+                    Posicao Posicao3 = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna - 3);
+
+                    if (Tab.PecaNaPosicao(Posicao1) == null && Tab.PecaNaPosicao(Posicao2) == null && Tab.PecaNaPosicao(Posicao3) == null)
+                    {
+                        MatrixAux[PosicaoPeca.Linha, PosicaoPeca.Coluna - 2] = true;
+                    }
+                }
+
+            }
+
+
+
+
+
+
 
             return MatrixAux;
         }
