@@ -27,11 +27,52 @@ namespace CamadaJogoDeXadrez
             ColocarPecas();
         }
 
+        public bool TesteXequeMate(CorPeca cor)
+        {
+            if (!EstaEmXeque(cor))
+            {
+                return false;
+            }
+            foreach (Peca peca in PecasEmJogo(cor))
+            {
+                bool[,] MatAux = peca.MovimentosPossiveis();
+
+                for (int i = 0; i < Tab.Linhas; i++)
+                {
+                    for (int j = 0; j < Tab.Colunas; j++)
+                    {
+                        if (MatAux[i, j])
+                        {
+                            Posicao Origem = peca.PosicaoPeca;
+
+                            Posicao Destino = new Posicao(i, j);
+
+                            Peca PecaCapturada = ExecutaMovimento(Origem, Destino);
+
+                            bool TesteXeque = EstaEmXeque(cor);
+
+                            DesfazerMovimento(Origem, Destino, PecaCapturada);
+
+                            if (!TesteXeque)
+                            {
+                                return false;// NOT XEQUE-MATE
+                            }
+                        }
+                    }
+                }
+
+            }
+            return true;//XEQUE-MATE
+        }
+
         public Peca ExecutaMovimento(Posicao PosicaoDeOrigem, Posicao PosicaoDeDestino)//retira a peça do lugar de origem, incrementa os movimentos e registra a captura
         {
             Peca p = Tab.RetirarPecaDaPosicao(PosicaoDeOrigem);
+            
             p.IncrementarQuantidadeDeMovimentos();
+            
             Peca PecaCapturada = Tab.RetirarPecaDaPosicao(PosicaoDeDestino);
+            
             Tab.ColocarPecaNaPosicao(p, PosicaoDeDestino);
 
             if (PecaCapturada != null)//se eu capturei uma peça ela vai ser inserida no conjunto das peças capturadas
@@ -44,7 +85,9 @@ namespace CamadaJogoDeXadrez
         public void DesfazerMovimento(Posicao Origem, Posicao Destino, Peca PecaCapturada)
         {
             Peca peca = Tab.RetirarPecaDaPosicao(Destino);
+            
             peca.DecrementarQuantidadeDeMovimentos();
+
             if (PecaCapturada != null)//se teve peca capturada
             {
                 Tab.ColocarPecaNaPosicao(PecaCapturada, Destino);
@@ -63,18 +106,28 @@ namespace CamadaJogoDeXadrez
                 DesfazerMovimento(origem, destino, PecaCapturada);
                 throw new TabuleiroException("Voce não pode se colocar em Xeque!!! :(");
             }
+
             if (EstaEmXeque(Adversaria(JogadorAtual)))//Se meu oponente esta em xeque, deixa realizar a jogada
             {
                 SeEstouEmXeque = true;
             }
+
             else
             {
                 SeEstouEmXeque = false;
             }
 
-            Turno++;
-            MudaJogador();
+            if (TesteXequeMate(Adversaria(JogadorAtual)))// realizei a jogada e meu adverspario esta em xeque-mate
+            {
+                PartidaTerminada = true;// Fim de jogo
+            }
+            else
+            {
+                Turno++;
+                MudaJogador();
+            }
         }
+
         private void MudaJogador()//Troca a vez de jogar
         {
             if (JogadorAtual == CorPeca.Preta)
@@ -86,21 +139,25 @@ namespace CamadaJogoDeXadrez
                 JogadorAtual = CorPeca.Preta;
             }
         }
+
         public void ValidarPosicaoDeOrigem(Posicao posicao)// confere se tem uma peça, se a peça é da cor do jogador da rodada e se há movimentos possiveis.
         {
             if (Tab.PecaNaPosicao(posicao) == null)
             {
                 throw new TabuleiroException("Não existe peça na posição de origem escolhida!");
             }
+            
             if (JogadorAtual != Tab.PecaNaPosicao(posicao).Cor)
             {
                 throw new TabuleiroException("A peça de origem escolhida não é sua!");
             }
+            
             if (!Tab.PecaNaPosicao(posicao).ExisteMovimentosPossiveis())
             {
                 throw new TabuleiroException("não há movimentos possíveis para a peça de origem escolhida!");
             }
         }
+
         public void ValidarPosicaoDeDestino(Posicao origem, Posicao destino)
         {
             if (!Tab.PecaNaPosicao(origem).PodeMoverPara(destino))
@@ -108,6 +165,7 @@ namespace CamadaJogoDeXadrez
                 throw new TabuleiroException("Posiçao de destino inválida! ");
             }
         }
+
         private CorPeca Adversaria(CorPeca cor)//Diz quem é o adversário
         {
             if (cor == CorPeca.Branca)
@@ -166,6 +224,7 @@ namespace CamadaJogoDeXadrez
             }
             return ConjuntoAuxiliar;
         }
+
         public HashSet<Peca> PecasEmJogo(CorPeca cor)//peças em jogo de acordo com a cor.
         {
             HashSet<Peca> ConjuntoAuxiliar = new HashSet<Peca>();//crio um conjunto do tipo 'Peça'
@@ -181,7 +240,6 @@ namespace CamadaJogoDeXadrez
 
             return ConjuntoAuxiliar;
         }
-
 
         public void ColocarNovaPeca(char coluna, int linha, Peca peca)//dada uma posicao, coloca peça lá.
         {

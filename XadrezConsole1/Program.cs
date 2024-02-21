@@ -36,14 +36,17 @@ namespace XadrezConsole1
 
                         Partida.RealizaJogada(OrigemDoMovimento, DestinoDoMovimento);
                     }
+
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                         Console.ReadKey();
                     }
                 }
-
+                Console.Clear();
+                TelaJogo.ImprimirPartida(Partida);
             }
+
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
