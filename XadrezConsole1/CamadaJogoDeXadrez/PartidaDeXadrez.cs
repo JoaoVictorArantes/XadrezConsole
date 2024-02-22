@@ -169,7 +169,7 @@ namespace CamadaJogoDeXadrez
                 Tab.ColocarPecaNaPosicao(Torre, OrigemTorre);
             }
 
-            // #jogadaespecial en passant
+            // En Passant
             if (peca is Peao)
             {
                 if (Origem.Coluna != Destino.Coluna && PecaCapturada == PecaVulneravelEnPassant)
