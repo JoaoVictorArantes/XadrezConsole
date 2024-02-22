@@ -11,7 +11,7 @@ namespace CamadaJogoDeXadrez
         public int Turno { get; private set; }
         public CorPeca JogadorAtual { get; private set; }
         public bool PartidaTerminada { get; private set; }
-        private HashSet<Peca> ConjuntoDepecasEmJogo;
+        private HashSet<Peca> ConjuntoDePecasEmJogo;
         private HashSet<Peca> ConjuntoDePecasCapturadas;
         public bool SeEstouEmXeque { get; private set; }
         public Peca PecaVulneravelEnPassant { get; private set; }
@@ -22,7 +22,7 @@ namespace CamadaJogoDeXadrez
             Turno = 1;
             JogadorAtual = CorPeca.Branca;
             PartidaTerminada = false;
-            ConjuntoDepecasEmJogo = new HashSet<Peca>();
+            ConjuntoDePecasEmJogo = new HashSet<Peca>();
             ConjuntoDePecasCapturadas = new HashSet<Peca>();
             SeEstouEmXeque = false;
             PecaVulneravelEnPassant = null;
@@ -200,6 +200,27 @@ namespace CamadaJogoDeXadrez
                 throw new TabuleiroException("Voce não pode se colocar em Xeque!!! :(");
             }
 
+            Peca PecaAux = Tab.PecaNaPosicao(destino);
+
+            // Promoção do peao
+
+            if (PecaAux is Peao)
+            {
+                if ((PecaAux.Cor == CorPeca.Branca && destino.Linha == 0) || (PecaAux.Cor == CorPeca.Preta && destino.Linha == 7))
+                {//ou um branco chega na linha 0 ou um preto que chega na linha 7
+                    PecaAux = Tab.RetirarPecaDaPosicao(destino);
+                    ConjuntoDePecasEmJogo.Remove(PecaAux);
+                    
+                    Peca Dama = new Dama(Tab, PecaAux.Cor);
+
+                    Tab.ColocarPecaNaPosicao(Dama, destino);
+
+                    ConjuntoDePecasEmJogo.Add(Dama);
+
+                    
+                }
+            }
+
             if (EstaEmXeque(Adversaria(JogadorAtual)))//Se meu oponente esta em xeque, deixa realizar a jogada
             {
                 SeEstouEmXeque = true;
@@ -219,7 +240,7 @@ namespace CamadaJogoDeXadrez
                 MudaJogador();
             }
 
-            Peca PecaAux = Tab.PecaNaPosicao(destino);
+            
 
             //EN PASSANT
             if (PecaAux is Peao && (destino.Linha == origem.Linha - 2 || destino.Linha == origem.Linha +2))
@@ -333,7 +354,7 @@ namespace CamadaJogoDeXadrez
         {
             HashSet<Peca> ConjuntoAuxiliar = new HashSet<Peca>();//crio um conjunto do tipo 'Peça'
 
-            foreach (Peca pecas in ConjuntoDepecasEmJogo)// para cada objeto do tipo Peça no ConjuntoDepecasEmJogo
+            foreach (Peca pecas in ConjuntoDePecasEmJogo)// para cada objeto do tipo Peça no ConjuntoDepecasEmJogo
             {
                 if (pecas.Cor == cor)// comparo se a cor da peça no ConjuntoDepecasEmJogo é a mesma informada como parametro
                 {
@@ -348,7 +369,7 @@ namespace CamadaJogoDeXadrez
         public void ColocarNovaPeca(char coluna, int linha, Peca peca)//dada uma posicao, coloca peça lá.
         {
             Tab.ColocarPecaNaPosicao(peca, new PosicaoXadrez(coluna, linha).toPosicao());
-            ConjuntoDepecasEmJogo.Add(peca);//adiciona as peças ao conjunto da partida
+            ConjuntoDePecasEmJogo.Add(peca);//adiciona as peças ao conjunto da partida
         }
 
         private void ColocarPecas()
