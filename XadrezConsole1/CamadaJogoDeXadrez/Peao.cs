@@ -7,9 +7,12 @@ namespace CamadaJogoDeXadrez
 {
     internal class Peao : Peca
     {
-        public Peao(Tabuleiro tab, CorPeca cor) : base(tab, cor)
-        {
+        private PartidaDeXadrez partidaDeXadrez;
 
+
+        public Peao(Tabuleiro tab, CorPeca cor, PartidaDeXadrez partidaDeXadrez) : base(tab, cor)
+        {
+            this.partidaDeXadrez = partidaDeXadrez;
         }
         public override string ToString()
         {
@@ -56,21 +59,21 @@ namespace CamadaJogoDeXadrez
                 {
                     mat[pos.Linha, pos.Coluna] = true;
                 }
-                /*
-                // #jogadaespecial en passant
+                
+                // En Passant
                 if (PosicaoPeca.Linha == 3)
                 {
                     Posicao esquerda = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna - 1);
-                    if (Tab.PosicaoValida(esquerda) && existeInimigo(esquerda) && Tab.PecaNaPosicao(esquerda) == partida.vulneravelEnPassant)
+                    if (Tab.PosicaoValida(esquerda) && ExisteInimigo(esquerda) && Tab.PecaNaPosicao(esquerda) == partidaDeXadrez.PecaVulneravelEnPassant)
                     {
                         mat[esquerda.Linha - 1, esquerda.Coluna] = true;
                     }
                     Posicao direita = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna + 1);
-                    if (Tab.PosicaoValida(direita) && existeInimigo(direita) && Tab.PecaNaPosicao(direita) == partida.vulneravelEnPassant)
+                    if (Tab.PosicaoValida(direita) && ExisteInimigo(direita) && Tab.PecaNaPosicao(direita) == partidaDeXadrez.PecaVulneravelEnPassant)
                     {
                         mat[direita.Linha - 1, direita.Coluna] = true;
                     }
-                }*/
+                }
             }
             else
             {
@@ -95,21 +98,21 @@ namespace CamadaJogoDeXadrez
                 {
                     mat[pos.Linha, pos.Coluna] = true;
                 }
-                /*
-                // #jogadaespecial en passant
+                
+                // En Passant
                 if (PosicaoPeca.Linha == 4)
                 {
                     Posicao esquerda = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna - 1);
-                    if (Tab.PosicaoValida(esquerda) && existeInimigo(esquerda) && Tab.PecaNaPosicao(esquerda) == partida.vulneravelEnPassant)
+                    if (Tab.PosicaoValida(esquerda) && ExisteInimigo(esquerda) && Tab.PecaNaPosicao(esquerda) == partidaDeXadrez.PecaVulneravelEnPassant)
                     {
                         mat[esquerda.Linha + 1, esquerda.Coluna] = true;
                     }
                     Posicao direita = new Posicao(PosicaoPeca.Linha, PosicaoPeca.Coluna + 1);
-                    if (Tab.PosicaoValida(direita) && existeInimigo(direita) && Tab.PecaNaPosicao(direita) == partida.vulneravelEnPassant)
+                    if (Tab.PosicaoValida(direita) && ExisteInimigo(direita) && Tab.PecaNaPosicao(direita) == partidaDeXadrez.PecaVulneravelEnPassant)
                     {
                         mat[direita.Linha + 1, direita.Coluna] = true;
                     }
-                }*/
+                }
             }
 
             return mat;

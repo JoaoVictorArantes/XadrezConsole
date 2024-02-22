@@ -119,15 +119,7 @@ namespace CamadaJogoDeXadrez
                         MatrixAux[PosicaoPeca.Linha, PosicaoPeca.Coluna - 2] = true;
                     }
                 }
-
             }
-
-
-
-
-
-
-
             return MatrixAux;
         }
 

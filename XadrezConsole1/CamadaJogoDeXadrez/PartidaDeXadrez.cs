@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using CamadaTabuleiro;
 using XadrezConsole1.CamadaJogoDeXadrez;
 
@@ -13,6 +14,7 @@ namespace CamadaJogoDeXadrez
         private HashSet<Peca> ConjuntoDepecasEmJogo;
         private HashSet<Peca> ConjuntoDePecasCapturadas;
         public bool SeEstouEmXeque { get; private set; }
+        public Peca PecaVulneravelEnPassant { get; private set; }
 
         public PartidaDeXadrez()
         {
@@ -23,6 +25,7 @@ namespace CamadaJogoDeXadrez
             ConjuntoDepecasEmJogo = new HashSet<Peca>();
             ConjuntoDePecasCapturadas = new HashSet<Peca>();
             SeEstouEmXeque = false;
+            PecaVulneravelEnPassant = null;
 
             ColocarPecas();
         }
@@ -67,13 +70,13 @@ namespace CamadaJogoDeXadrez
 
         public Peca ExecutaMovimento(Posicao PosicaoDeOrigem, Posicao PosicaoDeDestino)//retira a peça do lugar de origem, incrementa os movimentos e registra a captura
         {
-            Peca p = Tab.RetirarPecaDaPosicao(PosicaoDeOrigem);
+            Peca peca = Tab.RetirarPecaDaPosicao(PosicaoDeOrigem);
             
-            p.IncrementarQuantidadeDeMovimentos();
+            peca.IncrementarQuantidadeDeMovimentos();
             
             Peca PecaCapturada = Tab.RetirarPecaDaPosicao(PosicaoDeDestino);
             
-            Tab.ColocarPecaNaPosicao(p, PosicaoDeDestino);
+            Tab.ColocarPecaNaPosicao(peca, PosicaoDeDestino);
 
             if (PecaCapturada != null)//se eu capturei uma peça ela vai ser inserida no conjunto das peças capturadas
             {
@@ -81,7 +84,7 @@ namespace CamadaJogoDeXadrez
             }
 
             //Roque pequeno
-            if (p is Rei && PosicaoDeDestino.Coluna == PosicaoDeOrigem.Coluna + 2)
+            if (peca is Rei && PosicaoDeDestino.Coluna == PosicaoDeOrigem.Coluna + 2)
             {
                 Posicao OrigemTorre = new Posicao(PosicaoDeOrigem.Linha, PosicaoDeOrigem.Coluna + 3);
                 Posicao DestinoTorre = new Posicao(PosicaoDeOrigem.Linha, PosicaoDeOrigem.Coluna + 1);
@@ -94,7 +97,7 @@ namespace CamadaJogoDeXadrez
             }
 
             //Roque grande
-            if (p is Rei && PosicaoDeDestino.Coluna == PosicaoDeOrigem.Coluna - 2)
+            if (peca is Rei && PosicaoDeDestino.Coluna == PosicaoDeOrigem.Coluna - 2)
             {
                 Posicao OrigemTorre = new Posicao(PosicaoDeOrigem.Linha, PosicaoDeOrigem.Coluna - 4);
                 Posicao DestinoTorre = new Posicao(PosicaoDeOrigem.Linha, PosicaoDeOrigem.Coluna - 1);
@@ -104,6 +107,25 @@ namespace CamadaJogoDeXadrez
                 Torre.IncrementarQuantidadeDeMovimentos();
 
                 Tab.ColocarPecaNaPosicao(Torre, DestinoTorre);
+            }
+
+            if (peca is Peao)
+            {
+                if (PosicaoDeOrigem.Coluna != PosicaoDeDestino.Coluna && PecaCapturada == null)
+                {
+                    Posicao PosicaoPeao;
+
+                    if (peca.Cor == CorPeca.Branca)
+                    {
+                        PosicaoPeao = new Posicao(PosicaoDeDestino.Linha + 1, PosicaoDeDestino.Coluna);
+                    }
+                    else
+                    {
+                        PosicaoPeao = new Posicao(PosicaoDeDestino.Linha - 1, PosicaoDeDestino.Coluna);
+                    }
+                    PecaCapturada = Tab.RetirarPecaDaPosicao(PosicaoPeao);
+                    ConjuntoDePecasCapturadas.Add(PecaCapturada);
+                }
             }
 
             return PecaCapturada;
@@ -146,6 +168,25 @@ namespace CamadaJogoDeXadrez
 
                 Tab.ColocarPecaNaPosicao(Torre, OrigemTorre);
             }
+
+            // #jogadaespecial en passant
+            if (peca is Peao)
+            {
+                if (Origem.Coluna != Destino.Coluna && PecaCapturada == PecaVulneravelEnPassant)
+                {
+                    Peca peao = Tab.RetirarPecaDaPosicao(Destino);
+                    Posicao posP;
+                    if (peca.Cor == CorPeca.Branca)
+                    {
+                        posP = new Posicao(3, Destino.Coluna);
+                    }
+                    else
+                    {
+                        posP = new Posicao(4, Destino.Coluna);
+                    }
+                    Tab.ColocarPecaNaPosicao(peao, posP);
+                }
+            }
         }
 
 
@@ -177,17 +218,29 @@ namespace CamadaJogoDeXadrez
                 Turno++;
                 MudaJogador();
             }
+
+            Peca PecaAux = Tab.PecaNaPosicao(destino);
+
+            //EN PASSANT
+            if (PecaAux is Peao && (destino.Linha == origem.Linha - 2 || destino.Linha == origem.Linha +2))
+            {//se essa peça movida é um peao e andou 2 linhas a mais ou a menos
+                PecaVulneravelEnPassant = PecaAux;
+            }
+            else
+            {
+                PecaVulneravelEnPassant = null;
+            }
         }
 
         private void MudaJogador()//Troca a vez de jogar
         {
-            if (JogadorAtual == CorPeca.Preta)
+            if (JogadorAtual == CorPeca.Branca)
             {
-                JogadorAtual = CorPeca.Branca;
+                JogadorAtual = CorPeca.Preta;
             }
             else
             {
-                JogadorAtual = CorPeca.Preta;
+                JogadorAtual = CorPeca.Branca;
             }
         }
 
@@ -309,14 +362,14 @@ namespace CamadaJogoDeXadrez
             ColocarNovaPeca('g', 1, new Cavalo(Tab, CorPeca.Branca));
             ColocarNovaPeca('h', 1, new Torre(Tab, CorPeca.Branca));
 
-            ColocarNovaPeca('a', 2, new Peao(Tab, CorPeca.Branca));
-            ColocarNovaPeca('b', 2, new Peao(Tab, CorPeca.Branca));
-            ColocarNovaPeca('c', 2, new Peao(Tab, CorPeca.Branca));
-            ColocarNovaPeca('d', 2, new Peao(Tab, CorPeca.Branca));
-            ColocarNovaPeca('e', 2, new Peao(Tab, CorPeca.Branca));
-            ColocarNovaPeca('f', 2, new Peao(Tab, CorPeca.Branca));
-            ColocarNovaPeca('g', 2, new Peao(Tab, CorPeca.Branca));
-            ColocarNovaPeca('h', 2, new Peao(Tab, CorPeca.Branca));
+            ColocarNovaPeca('a', 2, new Peao(Tab, CorPeca.Branca, this));
+            ColocarNovaPeca('b', 2, new Peao(Tab, CorPeca.Branca, this));
+            ColocarNovaPeca('c', 2, new Peao(Tab, CorPeca.Branca, this));
+            ColocarNovaPeca('d', 2, new Peao(Tab, CorPeca.Branca, this));
+            ColocarNovaPeca('e', 2, new Peao(Tab, CorPeca.Branca, this));
+            ColocarNovaPeca('f', 2, new Peao(Tab, CorPeca.Branca, this));
+            ColocarNovaPeca('g', 2, new Peao(Tab, CorPeca.Branca, this));
+            ColocarNovaPeca('h', 2, new Peao(Tab, CorPeca.Branca, this));
 
             ColocarNovaPeca('a', 8, new Torre(Tab, CorPeca.Preta));
             ColocarNovaPeca('b', 8, new Cavalo(Tab, CorPeca.Preta));
@@ -327,14 +380,14 @@ namespace CamadaJogoDeXadrez
             ColocarNovaPeca('g', 8, new Cavalo(Tab, CorPeca.Preta));
             ColocarNovaPeca('h', 8, new Torre(Tab, CorPeca.Preta));
 
-            ColocarNovaPeca('a', 7, new Peao(Tab, CorPeca.Preta));
-            ColocarNovaPeca('b', 7, new Peao(Tab, CorPeca.Preta));
-            ColocarNovaPeca('c', 7, new Peao(Tab, CorPeca.Preta));
-            ColocarNovaPeca('d', 7, new Peao(Tab, CorPeca.Preta));
-            ColocarNovaPeca('e', 7, new Peao(Tab, CorPeca.Preta));
-            ColocarNovaPeca('f', 7, new Peao(Tab, CorPeca.Preta));
-            ColocarNovaPeca('g', 7, new Peao(Tab, CorPeca.Preta));
-            ColocarNovaPeca('h', 7, new Peao(Tab, CorPeca.Preta));
+            ColocarNovaPeca('a', 7, new Peao(Tab, CorPeca.Preta, this));
+            ColocarNovaPeca('b', 7, new Peao(Tab, CorPeca.Preta, this));
+            ColocarNovaPeca('c', 7, new Peao(Tab, CorPeca.Preta, this));
+            ColocarNovaPeca('d', 7, new Peao(Tab, CorPeca.Preta, this));
+            ColocarNovaPeca('e', 7, new Peao(Tab, CorPeca.Preta, this));
+            ColocarNovaPeca('f', 7, new Peao(Tab, CorPeca.Preta, this));
+            ColocarNovaPeca('g', 7, new Peao(Tab, CorPeca.Preta, this));
+            ColocarNovaPeca('h', 7, new Peao(Tab, CorPeca.Preta, this));
         }
     }
 }

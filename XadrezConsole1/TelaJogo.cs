@@ -11,6 +11,7 @@ namespace XadrezConsole1
         public static void ImprimirPartida(PartidaDeXadrez partida)
         {
             ImprimirTabuleiro(partida.Tab);
+            Console.WriteLine();
             ImprimirPecasCaptuadas(partida);
             Console.WriteLine();
             Console.WriteLine($"Turno: {partida.Turno}");
@@ -135,6 +136,5 @@ namespace XadrezConsole1
                 Console.Write(" ");
             }
         }
-
     }
 }
