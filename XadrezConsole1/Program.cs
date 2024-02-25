@@ -37,7 +37,7 @@ namespace XadrezConsole1
                         Partida.RealizaJogada(OrigemDoMovimento, DestinoDoMovimento);
                     }
 
-                    catch (Exception ex)
+                    catch (TabuleiroException ex)
                     {
                         Console.WriteLine(ex.Message);
                         Console.ReadKey();
@@ -47,7 +47,7 @@ namespace XadrezConsole1
                 TelaJogo.ImprimirPartida(Partida);
             }
 
-            catch(Exception ex)
+            catch(TabuleiroException ex)
             {
                 Console.WriteLine(ex.Message);
             }

@@ -44,14 +44,13 @@ namespace XadrezConsole1
             ImprimirConjunto(partida.PecasCapturadas(CorPeca.Branca));
             Console.WriteLine();
             
-
-            
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Pretas: ");
             ImprimirConjunto(partida.PecasCapturadas(CorPeca.Preta));
             Console.ForegroundColor = aux;
             Console.WriteLine();
         }
+
         public static void ImprimirConjunto(HashSet<Peca> conjunto)
         {
             Console.Write("[");
@@ -60,8 +59,8 @@ namespace XadrezConsole1
                 Console.Write(peca + " ");
             }
             Console.Write("]");
-
         }
+
         public static void ImprimirTabuleiro(Tabuleiro tab)
         {
             for (int i = 0; i < tab.Linhas; i++)
@@ -75,10 +74,11 @@ namespace XadrezConsole1
             }
             Console.WriteLine("\n   A B C D E F G H");
         }
+
         public static void ImprimirTabuleiro(Tabuleiro tab, bool[,] PosicoesPossiveis)
         {
             ConsoleColor FundoOriginal = Console.BackgroundColor; // peguei a cor do fundo
-            ConsoleColor FundoAlterado = ConsoleColor.Cyan; // peguei a cor do fundo
+            ConsoleColor FundoAlterado = ConsoleColor.Cyan; // alterei a cor do fundo
 
             for (int i = 0; i < tab.Linhas; i++)
             {
@@ -100,8 +100,8 @@ namespace XadrezConsole1
             }
             Console.WriteLine("\n   A B C D E F G H");
             Console.BackgroundColor = FundoOriginal;
-
         }
+
         public static PosicaoXadrez LerPosicaoXadrez()
         {
             string StringAux = Console.ReadLine();

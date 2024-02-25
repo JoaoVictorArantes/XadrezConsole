@@ -16,8 +16,8 @@ namespace CamadaTabuleiro
         public Peca(Tabuleiro tab, CorPeca cor)
         {
             PosicaoPeca = null;
-            Cor = cor;
             Tab = tab;
+            Cor = cor;            
             QuantidadeMovimentos = 0;
         }
 
