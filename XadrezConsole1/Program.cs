@@ -15,6 +15,7 @@ namespace XadrezConsole1
                 {
                     try
                     {
+                        
                         Console.Clear();
                         TelaJogo.ImprimirPartida(Partida);
 
@@ -32,8 +33,7 @@ namespace XadrezConsole1
                         Console.Write("\nDestino: ");
                         Posicao DestinoDoMovimento = TelaJogo.LerPosicaoXadrez().toPosicao();
                         Partida.ValidarPosicaoDeDestino(OrigemDoMovimento, DestinoDoMovimento);
-
-
+                                                
                         Partida.RealizaJogada(OrigemDoMovimento, DestinoDoMovimento);
                     }
 
